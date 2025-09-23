@@ -98,6 +98,7 @@ def classify_user_points(training_data):
                     break
                 print('Please enter Y or N (not case sensitive).')
             if try_again == 'n':
+                print('Thanks for using the Pichu/Pikachu classifier!')
                 break
         except ValueError:
             print('Invalid input. Please enter numerical values only.')
@@ -109,7 +110,7 @@ def classify_user_points(training_data):
 def main():
     training_data = read_datapoints(data_path)
     # plot_datapoints(training_data)
-    testpoints = read_testpoints(test_path)
+    # testpoints = read_testpoints(test_path)
     # for point in testpoints:
     #     nearest_neighbour(point, training_data)
 
