@@ -73,9 +73,9 @@ def euclidean_distance(p1, p2):
 def nearest_neighbour(testpoint, training_data):
     poke_data = []
     for data_point in training_data:
-        point_2d = (data_point[0], data_point[1])
+        coords = (data_point[0], data_point[1])
         label = 'Pikachu' if data_point[2] == 1 else 'Pichu'
-        poke_data.append((euclidean_distance(testpoint, point_2d), label))
+        poke_data.append((euclidean_distance(testpoint, coords), label))
     neighbour = min(poke_data)
     print(f'Sample with (width, height): {testpoint} classified as {neighbour[1]}')
 
@@ -104,17 +104,37 @@ def classify_user_points(training_data):
             print('Invalid input. Please enter numerical values only.')
 
 
+def classify_k_nearest_neighbours(testpoint, training_data, k=10):
+    poke_data = []
+    for data_point in training_data:
+        coords = (data_point[0], data_point[1])
+        label = data_point[2]
+        poke_data.append((euclidean_distance(testpoint, coords), label))
+    poke_data.sort() # sort the distances in place
+
+    k_neighbours = poke_data[:k] # slice the first 10 values
+
+    votes = [label for _,label in k_neighbours] # get just the labels
+
+    prediction = 1 if votes.count(1) > votes.count(0) else 0
+
+    print(f'Sample with (width, height): {testpoint} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
+
+
+
 
 
 
 def main():
     training_data = read_datapoints(data_path)
     # plot_datapoints(training_data)
-    # testpoints = read_testpoints(test_path)
+    testpoints = read_testpoints(test_path)
     # for point in testpoints:
     #     nearest_neighbour(point, training_data)
 
-    classify_user_points(training_data)
+    # classify_user_points(training_data)
+
+    classify_k_nearest_neighbours((23.22, 22), training_data)
 
 
 if __name__ == '__main__':
