@@ -79,14 +79,41 @@ def nearest_neighbour(testpoint, training_data):
     neighbour = min(poke_data)
     print(f'Sample with (width, height): {testpoint} classified as {neighbour[1]}')
 
+def classify_user_points(training_data):
+    # TODO: deal with really big numbers because pokemon really shouldn't be metres long
+    while True:
+        try:
+            print('\nIs it a Pikachu or a Pichu? \nLet\'s classify your pokemon based on its width and height.\n')
+            width = float(input('Enter the width of the pokemon \n'))
+            height = float(input('Enter the height of the pokemon \n'))
+
+            if width < 0 or height < 0:
+                print('Width and height must be non-negative! Try again.')
+                continue
+            test_point = (width, height)
+            nearest_neighbour(test_point, training_data)
+            while True:
+                try_again = input('Would you like to classify another pokemon? Y/N ').lower()
+                if try_again in ('y', 'n'):
+                    break
+                print('Please enter Y or N (not case sensitive).')
+            if try_again == 'n':
+                break
+        except ValueError:
+            print('Invalid input. Please enter numerical values only.')
+
+
+
 
 
 def main():
     training_data = read_datapoints(data_path)
     # plot_datapoints(training_data)
     testpoints = read_testpoints(test_path)
-    for point in testpoints:
-        nearest_neighbour(point, training_data)
+    # for point in testpoints:
+    #     nearest_neighbour(point, training_data)
+
+    classify_user_points(training_data)
 
 
 if __name__ == '__main__':
