@@ -80,7 +80,7 @@ def nearest_neighbour(testpoint, training_data):
     print(f'Sample with (width, height): {testpoint} classified as {neighbour[1]}')
 
 def classify_user_points(training_data):
-    # TODO: deal with really big numbers because pokemon really shouldn't be metres long
+    # TODO: deal with really big numbers because pokemon really shouldn't be metres long!
     while True:
         try:
             print('\nIs it a Pikachu or a Pichu? \nLet\'s classify your pokemon based on its width and height.\n')
