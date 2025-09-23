@@ -122,19 +122,17 @@ def classify_k_nearest_neighbours(testpoint, training_data, k=10):
 
 
 
-
-
-
 def main():
     training_data = read_datapoints(data_path)
-    # plot_datapoints(training_data)
+    plot_datapoints(training_data)
     testpoints = read_testpoints(test_path)
     # for point in testpoints:
     #     nearest_neighbour(point, training_data)
 
-    # classify_user_points(training_data)
+    classify_user_points(training_data)
 
-    classify_k_nearest_neighbours((23.22, 22), training_data)
+    # for point in testpoints:
+    #     classify_k_nearest_neighbours(point, training_data)
 
 
 if __name__ == '__main__':
