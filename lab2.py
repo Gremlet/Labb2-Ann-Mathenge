@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import re
 import matplotlib.pyplot as plt
 
@@ -66,9 +67,27 @@ def plot_testpoints(testpoints):
     plt.title('Test data')
     plt.show()
 
+def euclidean_distance(p1, p2):
+    return math.dist(p1, p2)
+
+def nearest_neighbour(testpoint, training_data):
+    poke_data = []
+    for data_point in training_data:
+        point_2d = (data_point[0], data_point[1])
+        label = 'Pikachu' if data_point[2] == 1 else 'Pichu'
+        poke_data.append((euclidean_distance(testpoint, point_2d), label))
+    neighbour = min(poke_data)
+    print(f'Sample with (width, height): {testpoint} classified as {neighbour[1]}')
+
+
+
 def main():
     training_data = read_datapoints(data_path)
-    plot_datapoints(training_data)
+    # plot_datapoints(training_data)
+    testpoints = read_testpoints(test_path)
+    for point in testpoints:
+        nearest_neighbour(point, training_data)
+
 
 if __name__ == '__main__':
     main()
