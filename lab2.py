@@ -1,9 +1,10 @@
 import numpy as np
-import math
 import re
+import matplotlib.pyplot as plt
 
 data_path = './data/datapoints.txt'
 test_path = './data/testpoints.txt'
+
 
 def read_datapoints(filepath):
     datapoints = []
@@ -32,3 +33,45 @@ def read_testpoints(filepath):
             testpoints.append((width, height))
     return testpoints
 
+
+def plot_datapoints(datapoints):
+    pichus = [point for point in datapoints if point[2] == 0]
+    pikachus = [point for point in datapoints if point[2] == 1]
+
+    #split into x and y coords for pichus and pikachus
+    pichu_x = [p[0] for p in pichus]
+    pichu_y = [p[1] for p in pichus]
+
+    pikachu_x = [p[0] for p in pikachus]
+    pikachu_y = [p[1] for p in pikachus]
+
+    plt.scatter(pichu_x, pichu_y, color = 'blue', label = 'Pichu')
+    plt.scatter(pikachu_x, pikachu_y, color = 'yellow', label = 'Pikachu')
+
+    plt.xlabel('Width (cm)')
+    plt.ylabel('Height (cm)')
+    plt.title('Pichus and Pikachus')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+# just for fun, plot the test data
+# TODO: Put this in the same plot as pichus and pikachus? Could be fun to see.
+def plot_testpoints(testpoints):
+    x = [p[0] for p in testpoints]
+    y = [p[1] for p in testpoints]
+
+    plt.scatter(x, y, color = 'red', label = 'Test points')
+
+    plt.title('Test data')
+    plt.show()
+
+def main():
+    training_data = read_datapoints(data_path)
+    plot_datapoints(training_data)
+
+if __name__ == '__main__':
+    main()
+
+    
+ 
