@@ -2,6 +2,7 @@ import numpy as np
 import math
 import re
 import matplotlib.pyplot as plt
+import random
 
 data_path = './data/datapoints.txt'
 test_path = './data/testpoints.txt'
@@ -84,8 +85,8 @@ def classify_user_points(training_data):
     while True:
         try:
             print('\nIs it a Pikachu or a Pichu? \nLet\'s classify your pokemon based on its width and height.\n')
-            width = float(input('Enter the width of the pokemon \n'))
-            height = float(input('Enter the height of the pokemon \n'))
+            width = float(input('Enter the width of the pokemon in cm \n'))
+            height = float(input('Enter the height of the pokemon in cm \n'))
 
             if width < 0 or height < 0:
                 print('Width and height must be non-negative! Try again.')
@@ -120,6 +121,33 @@ def classify_k_nearest_neighbours(testpoint, training_data, k=10):
 
     print(f'Sample with (width, height): {testpoint} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
 
+def randomly_split_data(training_data):
+    pichus = []
+    pikachus = []
+
+    for point in training_data:
+        if point[2] == 0:
+            pichus.append(point)
+        elif point[2] == 1:
+            pikachus.append(point)
+
+    random.shuffle(pichus)
+    training_pichus = pichus[:50]
+    test_pichus = pichus[50:75]
+
+    random.shuffle(pikachus)
+    training_pikachus = pikachus[:50]
+    test_pikachus = pikachus[50:75]
+
+    new_training_data = training_pikachus + training_pichus
+    new_test_data = test_pikachus + test_pichus
+
+    random.shuffle(new_training_data)
+    random.shuffle(new_test_data)
+
+    return new_training_data, new_test_data
+
+
 
 
 def main():
@@ -129,10 +157,12 @@ def main():
     # for point in testpoints:
     #     nearest_neighbour(point, training_data)
 
-    classify_user_points(training_data)
+    # classify_user_points(training_data)
 
     # for point in testpoints:
     #     classify_k_nearest_neighbours(point, training_data)
+
+    randomly_split_data(training_data)
 
 
 if __name__ == '__main__':
