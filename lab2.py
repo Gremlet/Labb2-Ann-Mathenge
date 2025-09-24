@@ -119,7 +119,8 @@ def classify_k_nearest_neighbours(testpoint, training_data, k=10):
 
     prediction = 1 if votes.count(1) > votes.count(0) else 0
 
-    print(f'Sample with (width, height): {testpoint} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
+    # print(f'Sample with (width, height): {testpoint} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
+    return prediction
 
 def randomly_split_data(training_data):
     pichus = []
@@ -132,27 +133,31 @@ def randomly_split_data(training_data):
             pikachus.append(point)
 
     random.shuffle(pichus)
+    random.shuffle(pikachus)
+
     training_pichus = pichus[:50]
     test_pichus = pichus[50:75]
 
-    random.shuffle(pikachus)
     training_pikachus = pikachus[:50]
     test_pikachus = pikachus[50:75]
 
     new_training_data = training_pikachus + training_pichus
-    new_test_data = test_pikachus + test_pichus
+    full_test_data = test_pikachus + test_pichus
+    random.shuffle(full_test_data)
+
+    test_coords = [(w, h) for (w, h, _) in full_test_data]
+    test_labels = [label for (_, _, label) in full_test_data]
 
     random.shuffle(new_training_data)
-    random.shuffle(new_test_data)
 
-    return new_training_data, new_test_data
+    return new_training_data, test_coords, test_labels
 
 
 
 
 def main():
     training_data = read_datapoints(data_path)
-    plot_datapoints(training_data)
+    # plot_datapoints(training_data)
     testpoints = read_testpoints(test_path)
     # for point in testpoints:
     #     nearest_neighbour(point, training_data)
@@ -162,7 +167,20 @@ def main():
     # for point in testpoints:
     #     classify_k_nearest_neighbours(point, training_data)
 
-    randomly_split_data(training_data)
+    random_training_data, test_coords, test_labels = randomly_split_data(training_data)
+
+
+    for coords, actual_label in zip(test_coords, test_labels):
+        prediction = classify_k_nearest_neighbours(coords, random_training_data)
+        print(prediction)
+        if prediction == actual_label:
+            print('Correct classification')
+        else:
+            print('Incorrect classification')
+
+
+
+    
 
 
 if __name__ == '__main__':
