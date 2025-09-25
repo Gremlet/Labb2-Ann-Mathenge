@@ -169,15 +169,34 @@ def split_and_predict(training_data):
             fn += 1
 
     accuracy = (tp + tn) / len(test_labels)
-    print(f'accuracy is {accuracy}')
-    print(f'Pikachu predicted, actual Pikachu: {tp}')
-    print(f'Pichu predicted, actual Pichu: {tn}')
-    print(f'Pikachu predicted, actual Pichu: {fp}')
-    print(f'Pichu predicted, actual Pikachu: {fn}')
-
+    # print(f'accuracy is {accuracy}')
+    # print(f'Pikachu predicted, actual Pikachu: {tp}')
+    # print(f'Pichu predicted, actual Pichu: {tn}')
+    # print(f'Pikachu predicted, actual Pichu: {fp}')
+    # print(f'Pichu predicted, actual Pikachu: {fn}')
 
     return accuracy
 
+def evaluate_accuracy_over_multiple_runs(training_data, runs = 10):
+    accuracies = []
+
+    for i in range(runs):
+        acc = split_and_predict(training_data)
+        accuracies.append(acc)
+        print(f'Run {i + 1}: {acc:.2%}')
+    average = sum(accuracies) / len(accuracies)
+    print(f'Average accuracy over {runs} runs is {average:.2%}')
+    plot_accuracies(accuracies, runs)
+
+
+def plot_accuracies(accuracies, runs):
+    plt.plot(range(1, runs + 1), accuracies, marker='o')
+    plt.title(f"Accuracy over {runs} runs")
+    plt.xlabel("Run number")
+    plt.ylabel("Accuracy")
+    plt.ylim(0.8, 1.0)
+    plt.grid(True)
+    plt.show()
 
 
 def main():
@@ -192,7 +211,7 @@ def main():
     # for point in testpoints:
     #     classify_k_nearest_neighbours(point, training_data)
 
-    split_and_predict(training_data)
+    evaluate_accuracy_over_multiple_runs(training_data)
 
 
 
