@@ -2,6 +2,7 @@ import math
 import re
 import matplotlib.pyplot as plt
 import random
+from safe_exit import render_exit_message
 
 data_path = "./data/datapoints.txt"
 test_path = "./data/testpoints.txt"
@@ -298,6 +299,7 @@ def main():
             print("Please enter Y or N (not case sensitive).")
 
         if repeat == "n":
+            render_exit_message()
             print("\nThanks for taking a look at my lab! Have a nice day! 🙂")
             break
 
