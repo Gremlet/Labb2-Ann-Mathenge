@@ -1,4 +1,3 @@
-import numpy as np
 import math
 import re
 import matplotlib.pyplot as plt
@@ -48,7 +47,7 @@ def plot_datapoints(datapoints):
     pikachu_y = [p[1] for p in pikachus]
 
     plt.scatter(pichu_x, pichu_y, color = 'blue', label = 'Pichu')
-    plt.scatter(pikachu_x, pikachu_y, color = 'yellow', label = 'Pikachu')
+    plt.scatter(pikachu_x, pikachu_y, color = 'gold', label = 'Pikachu')
 
     plt.xlabel('Width (cm)')
     plt.ylabel('Height (cm)')
@@ -118,9 +117,32 @@ def classify_k_nearest_neighbours(testpoint, training_data, k=10):
     votes = [label for _,label in k_neighbours] # get just the labels
 
     prediction = 1 if votes.count(1) > votes.count(0) else 0
-
-    # print(f'Sample with (width, height): {testpoint} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
+    
     return prediction
+
+def classify_user_points_knn(training_data):
+    while True:
+        try:
+            print('\nIs it a Pikachu or a Pichu? \nLet\'s classify your pokemon based on its width and height.\n')
+            width = float(input('Enter the width of the pokemon in cm \n'))
+            height = float(input('Enter the height of the pokemon in cm \n'))
+
+            if width < 0 or height < 0:
+                print('Width and height must be non-negative! Try again.')
+                continue
+            test_point = (width, height)
+            prediction = classify_k_nearest_neighbours(test_point, training_data)
+            print(f'Sample with (width, height): {test_point} classified as {'Pikachu' if prediction == 1 else 'Pichu'} ')
+            while True:
+                try_again = input('Would you like to classify another pokemon? Y/N ').lower()
+                if try_again in ('y', 'n'):
+                    break
+                print('Please enter Y or N (not case sensitive).')
+            if try_again == 'n':
+                print('Thanks for using the Pichu/Pikachu classifier!')
+                break
+        except ValueError:
+            print('Invalid input. Please enter numerical values only.')
 
 def randomly_split_data(training_data):
     pichus = []
@@ -169,11 +191,11 @@ def split_and_predict(training_data):
             fn += 1
 
     accuracy = (tp + tn) / len(test_labels)
-    # print(f'accuracy is {accuracy}')
-    # print(f'Pikachu predicted, actual Pikachu: {tp}')
-    # print(f'Pichu predicted, actual Pichu: {tn}')
-    # print(f'Pikachu predicted, actual Pichu: {fp}')
-    # print(f'Pichu predicted, actual Pikachu: {fn}')
+    print(f'accuracy is {accuracy}')
+    print(f'Pikachu predicted, actual Pikachu: {tp}')
+    print(f'Pichu predicted, actual Pichu: {tn}')
+    print(f'Pikachu predicted, actual Pichu: {fp}')
+    print(f'Pichu predicted, actual Pikachu: {fn}')
 
     return accuracy
 
@@ -191,9 +213,9 @@ def evaluate_accuracy_over_multiple_runs(training_data, runs = 10):
 
 def plot_accuracies(accuracies, runs):
     plt.plot(range(1, runs + 1), accuracies, marker='o')
-    plt.title(f"Accuracy over {runs} runs")
-    plt.xlabel("Run number")
-    plt.ylabel("Accuracy")
+    plt.title(f'Accuracy over {runs} runs')
+    plt.xlabel('Run number')
+    plt.ylabel('Accuracy')
     plt.ylim(0.8, 1.0)
     plt.grid(True)
     plt.show()
@@ -201,21 +223,49 @@ def plot_accuracies(accuracies, runs):
 
 def main():
     training_data = read_datapoints(data_path)
-    # plot_datapoints(training_data)
     testpoints = read_testpoints(test_path)
-    # for point in testpoints:
-    #     nearest_neighbour(point, training_data)
 
-    # classify_user_points(training_data)
+    print('\nWelcome to Ann\'s Lab 2: Non-Generalising Machine Intelligence with Pokémon.')
+    print('\nIn this lab, we\'re working with simulated data about the width and height of Pikachus and Pichus.')
 
-    # for point in testpoints:
-    #     classify_k_nearest_neighbours(point, training_data)
+    while True:
+        print('Choose an option:\n')
+        print('1. Use the basic nearest neighbour algorithm to classify the provided test points.')
+        print('2. Manually enter a Pokemon\'s width and height to classify it using the nearest neighbour algorithm.')
+        print('3. Do the same as option 2, but use the k-nearest neighbours algorithm (default k = 10).')
+        print('4. Plot the training data.')
+        print('5. Use randomised training/test data (50 Pikachus, 50 Pichus / 25 of each in test) to evaluate the KNN algorithm\'s accuracy over multiple runs (default = 10), and plot the results.\n')
 
-    evaluate_accuracy_over_multiple_runs(training_data)
+        try:
+            choice = int(input('Enter your choice (1–5): \n'))
 
+            if choice == 1:
+                for point in testpoints:
+                    nearest_neighbour(point, training_data)
+            elif choice == 2:
+                classify_user_points(training_data)
+            elif choice == 3:
+                classify_user_points_knn(training_data)
+            elif choice == 4:
+                plot_datapoints(training_data)
+            elif choice == 5:
+                evaluate_accuracy_over_multiple_runs(training_data)
+            else:
+                print('Please enter a number from 1 to 5.\n')
+                continue
+        except ValueError:
+            print('Please enter a valid number.\n')
+            continue
 
+        while True:
+            repeat = input('Would you like to do something else? (Y/N): ').lower()
+            if repeat in ('y', 'n'):
+                break
+            print('Please enter Y or N (not case sensitive).')
 
-    
+        if repeat == 'n':
+            print('\nThanks for taking a look at my lab! Have a nice day! 🙂')
+            break
 
 
 if __name__ == '__main__':
