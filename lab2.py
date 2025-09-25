@@ -152,6 +152,31 @@ def randomly_split_data(training_data):
 
     return new_training_data, test_coords, test_labels
 
+def split_and_predict(training_data):
+    random_training_data, test_coords, test_labels = randomly_split_data(training_data)
+
+    tp, tn, fp, fn = 0, 0, 0, 0
+
+    for coords, actual_label in zip(test_coords, test_labels):
+        prediction = classify_k_nearest_neighbours(coords, random_training_data)
+        if prediction == 1 and actual_label == 1:
+            tp += 1
+        elif prediction == 0 and actual_label == 0:
+            tn += 1
+        elif prediction == 1 and actual_label == 0:
+            fp += 1
+        elif prediction == 0 and actual_label == 1:
+            fn += 1
+
+    accuracy = (tp + tn) / len(test_labels)
+    print(f'accuracy is {accuracy}')
+    print(f'Pikachu predicted, actual Pikachu: {tp}')
+    print(f'Pichu predicted, actual Pichu: {tn}')
+    print(f'Pikachu predicted, actual Pichu: {fp}')
+    print(f'Pichu predicted, actual Pikachu: {fn}')
+
+
+    return accuracy
 
 
 
@@ -167,16 +192,7 @@ def main():
     # for point in testpoints:
     #     classify_k_nearest_neighbours(point, training_data)
 
-    random_training_data, test_coords, test_labels = randomly_split_data(training_data)
-
-
-    for coords, actual_label in zip(test_coords, test_labels):
-        prediction = classify_k_nearest_neighbours(coords, random_training_data)
-        print(prediction)
-        if prediction == actual_label:
-            print('Correct classification')
-        else:
-            print('Incorrect classification')
+    split_and_predict(training_data)
 
 
 
