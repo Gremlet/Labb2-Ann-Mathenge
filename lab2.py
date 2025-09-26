@@ -64,7 +64,6 @@ def plot_datapoints(datapoints):
 
 
 # just for fun, plot the test data
-# TODO: Put this in the same plot as pichus and pikachus? Could be fun to see.
 def plot_testpoints(testpoints):
     x = [p[0] for p in testpoints]
     y = [p[1] for p in testpoints]
@@ -83,14 +82,15 @@ def nearest_neighbour(testpoint, training_data):
     poke_data = []
     for data_point in training_data:
         coords = (data_point[0], data_point[1])
-        label = "Pikachu" if data_point[2] == 1 else "Pichu"
+        label = data_point[2]
         poke_data.append((euclidean_distance(testpoint, coords), label))
     neighbour = min(poke_data)
-    print(f"Sample with (width, height): {testpoint} classified as {neighbour[1]}")
+
+    prediction_label = neighbour[1]
+    return prediction_label
 
 
 def classify_user_points(training_data):
-    # TODO: deal with really big numbers because pokemon really shouldn't be metres long!
     while True:
         try:
             print(
@@ -102,8 +102,21 @@ def classify_user_points(training_data):
             if width < 0 or height < 0:
                 print("Width and height must be non-negative! Try again.")
                 continue
+            if width > 100 or height > 100:
+                print(
+                    "Are you sure this isn't a Snorlax? Try something smaller! (Max 100 cm)"
+                )
+                continue
+            # To be fair, since Pikachus are only about 41cm, the limit should probably be smaller
+            # but for our purposes 100 cm is fine!
+
             test_point = (width, height)
-            nearest_neighbour(test_point, training_data)
+            prediction = nearest_neighbour(test_point, training_data)
+
+            print(
+                f"Sample with (width, height): {test_point} classified as {'Pikachu' if prediction == 1 else 'Pichu'} "
+            )
+
             while True:
                 try_again = input(
                     "Would you like to classify another pokemon? Y/N "
@@ -126,13 +139,17 @@ def classify_k_nearest_neighbours(testpoint, training_data, k=10):
         poke_data.append((euclidean_distance(testpoint, coords), label))
     poke_data.sort()  # sort the distances in place
 
-    k_neighbours = poke_data[:k]  # slice the first 10 values
+    k_neighbours = poke_data[:k]  # slice the first k values
 
     votes = [label for _, label in k_neighbours]  # get just the labels
 
-    prediction = 1 if votes.count(1) > votes.count(0) else 0
-
-    return prediction
+    if votes.count(1) > votes.count(0):
+        return 1
+    elif votes.count(0) > votes.count(1):
+        return 0
+    return nearest_neighbour(
+        testpoint, training_data
+    )  # default to nn if votes are tied
 
 
 def classify_user_points_knn(training_data):
@@ -147,8 +164,15 @@ def classify_user_points_knn(training_data):
             if width < 0 or height < 0:
                 print("Width and height must be non-negative! Try again.")
                 continue
+            if width > 100 or height > 100:
+                print(
+                    "Are you sure this isn't a Snorlax? Try something smaller! (Max 100 cm)"
+                )
+                continue
+
             test_point = (width, height)
             prediction = classify_k_nearest_neighbours(test_point, training_data)
+
             print(
                 f"Sample with (width, height): {test_point} classified as {'Pikachu' if prediction == 1 else 'Pichu'} "
             )
@@ -238,7 +262,7 @@ def plot_accuracies(accuracies, runs):
     plt.plot(range(1, runs + 1), accuracies, marker="o")
     plt.title(f"Accuracy over {runs} runs")
     plt.xlabel("Run number")
-    plt.ylabel("Accuracy")
+    plt.ylabel("Accuracy (%)")
     plt.ylim(0.8, 1.0)
     plt.grid(True)
     plt.show()
@@ -276,7 +300,10 @@ def main():
 
             if choice == 1:
                 for point in testpoints:
-                    nearest_neighbour(point, training_data)
+                    prediction = nearest_neighbour(point, training_data)
+                    print(
+                        f"Sample with (width, height): {point} classified as {'Pikachu' if prediction == 1 else 'Pichu'}"
+                    )
             elif choice == 2:
                 classify_user_points(training_data)
             elif choice == 3:
